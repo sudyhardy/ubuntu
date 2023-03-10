@@ -5,7 +5,7 @@
 #
 
 # Pull base image.
-FROM ubuntu:14.04
+FROM ubuntu:latest
 
 # Install.
 RUN \
@@ -15,7 +15,16 @@ RUN \
   apt-get install -y build-essential && \
   apt-get install -y software-properties-common && \
   apt-get install -y byobu curl git htop man unzip vim wget && \
+  apt update && apt install  openssh-server sudo -y && \
   rm -rf /var/lib/apt/lists/*
+
+RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1000 test 
+
+RUN  echo 'test:test' | chpasswd
+
+RUN service ssh start
+
+EXPOSE 22
 
 # Add files.
 ADD root/.bashrc /root/.bashrc
@@ -29,4 +38,5 @@ ENV HOME /root
 WORKDIR /root
 
 # Define default command.
+CMD ["/usr/sbin/sshd","-D"]
 CMD ["bash"]
