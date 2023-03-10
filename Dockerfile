@@ -22,9 +22,15 @@ RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1000 test
 
 RUN  echo 'test:test' | chpasswd
 
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
 RUN service ssh start
 
 EXPOSE 22
+
+RUN ip add
 
 # Add files.
 ADD root/.bashrc /root/.bashrc
